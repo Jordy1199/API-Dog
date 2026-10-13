@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUD Usuario - API Practica</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #050a14;
+            --hud-cyan: #00f2ff;
+            --hud-white: #e2f1f8;
+            --hud-border: rgba(0, 242, 255, 0.25);
+            --hud-card-bg: rgba(0, 242, 255, 0.04);
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-dark);
+            color: var(--hud-white);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background-image: 
+                radial-gradient(circle at center, rgba(10, 28, 56, 0.6) 0%, var(--bg-dark) 90%),
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        .hud-frame {
+            position: relative;
+            width: 100%;
+            max-width: 950px;
+            border: 1px solid var(--hud-border);
+            background: rgba(5, 12, 25, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 6px;
+            padding: 1.5rem;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.05);
+        }
+
+        .corner {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--hud-cyan);
+        }
+        .corner-tl { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+        .corner-tr { top: -2px; right: -2px; border-left: 0; border-bottom: 0; }
+        .corner-bl { bottom: -2px; left: -2px; border-right: 0; border-top: 0; }
+        .corner-br { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+
+        .hud-header, .hud-footer {
+            border-color: var(--hud-border) !important;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .hud-card {
+            background: var(--hud-card-bg);
+            border: 1px solid var(--hud-border);
+            border-radius: 4px;
+            padding: 1rem;
+        }
+
+        .hud-label {
+            font-size: 0.65rem;
+            color: rgba(226, 241, 248, 0.6);
+            text-transform: uppercase;
+        }
+
+        .hud-value {
+            font-size: 1rem;
+            color: var(--hud-cyan);
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 2px solid var(--hud-cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+            object-fit: cover;
+        }
+
+        .btn-hud {
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid var(--hud-cyan);
+            color: var(--hud-cyan);
+            font-family: inherit;
+            font-size: 0.8rem;
+            padding: 6px 16px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .btn-hud:hover {
+            background: var(--hud-cyan);
+            color: var(--bg-dark);
+            font-weight: 600;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="hud-frame">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <div class="hud-header border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">
+            <div><i class="fa-solid fa-paw text-info me-2 fs-6"></i>VISOR CANINO HUD</div>
+            <div class="opacity-75">ESTADO: ONLINE</div>
+        </div>
+
+        <div class="row g-3 align-items-center my-2">
+
+            <!-- Panel Izquierdo -->
+            <div class="col-md-3 d-none d-md-block">
+                <div class="hud-card mb-2">
+                    <div class="hud-label">ESTADO API</div>
+                    <div class="hud-value text-success">200 OK</div>
+                </div>
+                <div class="hud-card">
+                    <div class="hud-label">RESPUESTA</div>
+                    <div class="hud-value text-success" id="respuestaVal">--</div>
+                </div>
+            </div>
+
+            <!-- Panel Central -->
+            <div class="col-md-6 text-center">
+                <div class="hud-card py-4">
+                    <img src="" alt="Perro" class="user-avatar mb-3">
+                    <h5 class="hud-value fs-4 mb-1">Cargando...</h5>
+                    <div class="hud-label mb-1">FUENTE: CANIS LUPUS FAMILIARIS</div>
+                    <a href="#" target="_blank" class="hud-label" style="color: var(--hud-cyan); word-break: break-all; font-size:0.6rem;">--</a>
+                </div>
+            </div>
+
+            <!-- Panel Derecho -->
+            <div class="col-md-3 d-none d-md-block">
+                <div class="hud-card mb-2 text-end">
+                    <div class="hud-label">LATENCIA</div>
+                    <div class="hud-value" id="latenciaVal">-- ms</div>
+                </div>
+                <div class="hud-card text-end">
+                    <div class="hud-label">FORMATO</div>
+                    <div class="hud-value">JSON</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="hud-footer border-top pt-3 mt-2 d-flex justify-content-between align-items-center">
+            <button class="btn-hud">
+                <i class="fa-solid fa-arrows-rotate me-1"></i> SIGUIENTE PERRO
+            </button>
+            <span class="hud-label">API: DOG.CEO/API/BREEDS/IMAGE/RANDOM</span>
+        </div>
+    </div>
+
+    <script src="ApiDog.js"></script>
+
+</body>
+</html>
